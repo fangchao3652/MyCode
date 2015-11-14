@@ -65,7 +65,7 @@ public class FlowLayout extends ViewGroup {
             //子view的宽和高
             int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
             int childHeight = child.getMeasuredHeight() + lp.bottomMargin + lp.topMargin;
-            if (lineWidth + childWidth > sizeWidth) {
+            if (lineWidth + childWidth > sizeWidth-getPaddingLeft()-getPaddingRight()) {
                 width = Math.max(lineWidth, width);
                 lineWidth = childWidth;//重置
                 height += lineHeight;
@@ -81,9 +81,9 @@ public class FlowLayout extends ViewGroup {
 
         }
 
-        setMeasuredDimension(modeWidth == MeasureSpec.AT_MOST ? width : sizeWidth,
+        setMeasuredDimension(modeWidth == MeasureSpec.AT_MOST ? width+getPaddingLeft()+getPaddingRight() : sizeWidth,
 
-                modeHeight == MeasureSpec.AT_MOST ? height : sizeHeight);
+                modeHeight == MeasureSpec.AT_MOST ? height+getPaddingTop()+getPaddingBottom() : sizeHeight);
     }
 
     /**
@@ -108,7 +108,7 @@ public class FlowLayout extends ViewGroup {
             int childw = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
             int childH = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
 
-            if (childw + lineW > widh) { //如果需要换行
+            if (childw + lineW > widh-getPaddingLeft()-getPaddingRight()) { //如果需要换行
                 mLineHeight.add(lineH);
                 mAllViews.add(lineview);
                 //重置
@@ -127,8 +127,8 @@ public class FlowLayout extends ViewGroup {
         mAllViews.add(lineview);
 
         //设置 子view的位置
-        int left = 0;
-        int top = 0;
+        int left = getPaddingLeft();
+        int top = getPaddingTop();
         int lineNum = mAllViews.size();
         for (int i = 0; i < lineNum; i++) {
             lineview = mAllViews.get(i);
@@ -146,7 +146,8 @@ public class FlowLayout extends ViewGroup {
                 child.layout(lc, tc, rc, bc);
                 left += child.getMeasuredWidth() + lp.rightMargin + lp.leftMargin;
             }
-            left = 0;
+            //left = 0;
+          left = getPaddingLeft();
             top += lineHeight;
 
         }
