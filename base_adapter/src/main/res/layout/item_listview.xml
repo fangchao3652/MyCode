@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/id_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="啦啦啦拉拉"
+        android:textColor="#444"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/id_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_title"
+        android:layout_marginTop="10dp"
+        android:maxLines="2"
+        android:minLines="1"
+        android:text="这是描述信息打造万能的适配器"
+        android:textColor="#898989"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/id_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_desc"
+        android:layout_marginTop="10dp"
+        android:maxLines="2"
+        android:minLines="1"
+        android:text="2013-12-12"
+        android:textColor="#898989"
+        android:textSize="12sp" />
+    <TextView
+        android:background="#2ed667"
+        android:id="@+id/id_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_desc"
+        android:layout_marginTop="10dp"
+        android:maxLines="2"
+        android:minLines="1"
+        android:drawableLeft="@drawable/phone"
+        android:text="10086"
+        android:drawablePadding="5dp"
+android:layout_alignParentRight="true"
+        android:textColor="#fff"
+        android:padding="3dp"
+        android:textSize="12sp" />
+
+</RelativeLayout>

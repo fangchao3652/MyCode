@@ -45,12 +45,12 @@ public class FlowLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
         int modeWidth = MeasureSpec.getMode(widthMeasureSpec);
         int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
         int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
-        //  Log.e("fac",sizeWidth+"");
+         Log.e("onmeasure",sizeWidth+"");
         //wrap content
         int width = 0;//wrap content时的宽度 自己计算
         int height = 0;//wrap content时的高度 自己计算
@@ -94,6 +94,7 @@ public class FlowLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.e("onLayout","");
         mAllViews.clear();
         mLineHeight.clear();
         //当前viewGroup的宽度
@@ -107,6 +108,7 @@ public class FlowLayout extends ViewGroup {
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             int childw = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
             int childH = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
+
 
             if (childw + lineW > widh-getPaddingLeft()-getPaddingRight()) { //如果需要换行
                 mLineHeight.add(lineH);
