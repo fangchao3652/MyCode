@@ -224,8 +224,20 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 		}
 		return cacheKey;
 	}
-	
-	/**
+
+    private String bytesToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            String hex = Integer.toHexString(0xFF & bytes[i]);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
+
+    /**
 	 * 将缓存记录同步到journal文件中。
 	 */
 	public void fluchCache() {
@@ -236,18 +248,6 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private String bytesToHexString(byte[] bytes) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < bytes.length; i++) {
-			String hex = Integer.toHexString(0xFF & bytes[i]);
-			if (hex.length() == 1) {
-				sb.append('0');
-			}
-			sb.append(hex);
-		}
-		return sb.toString();
 	}
 
 	/**
@@ -367,5 +367,7 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 		}
 
 	}
+
+
 
 }

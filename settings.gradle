@@ -1,1 +1,1 @@
-include ':app', ':lrucacheanddisklru'
+include ':app', ':lrucacheanddisklru', ':flowlayout'
