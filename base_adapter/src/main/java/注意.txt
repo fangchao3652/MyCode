@@ -1,0 +1,7 @@
+当itemView中加入checkbok时 会抢占焦点 导致listview无法点击
+解决方法1：设置checkbox 的 android:focusable="false"
+解决方法2：在它的外层设置    android:descendantFocusability="blocksDescendants"
+
+checkBox 复用问题
+1.bean中记录 是否选中
+2. 用一个list 记录选中的

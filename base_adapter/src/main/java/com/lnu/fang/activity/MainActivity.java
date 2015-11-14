@@ -50,8 +50,14 @@ public class MainActivity extends ActionBarActivity {
         mdatas.add(bean);
         bean = new Bean("Android新技能8", "androdi  打造万能的adapter", "2012-12-12", "10086");
         mdatas.add(bean);
+        bean = new Bean("Android新技能9", "androdi  打造万能的adapter", "2012-12-12", "10086");
+        mdatas.add(bean);
+        bean = new Bean("Android新技能10", "androdi  打造万能的adapter", "2012-12-12", "10086");
+        mdatas.add(bean);
+        bean = new Bean("Android新技能11", "androdi  打造万能的adapter", "2012-12-12", "10086");
+        mdatas.add(bean);
 
-        adapter=new MyAdapterWithCommonViewHolder(this,mdatas);
+        adapter=new MyAdapterWithCommonViewHolder(this,mdatas,R.layout.item_listview);
     }
 
 }

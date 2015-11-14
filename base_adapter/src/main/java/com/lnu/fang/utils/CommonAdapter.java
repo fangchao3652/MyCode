@@ -18,12 +18,13 @@ import java.util.List;
 public abstract class CommonAdapter<T> extends BaseAdapter {
     protected Context context;
     protected List<T> mdatas;
-
+    protected int layoutId;
     protected LayoutInflater inflater;
 
-    public CommonAdapter(Context context, List<T> datas) {
+    public CommonAdapter(Context context, List<T> datas, int layoutId) {
         this.context = context;
         this.mdatas = datas;
+        this.layoutId = layoutId;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -45,7 +46,7 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
 
     @Override
     public View getView(int position, View parent, ViewGroup viewGroup) {
-        ViewHolder holder = ViewHolder.get(context, parent, viewGroup, R.layout.item_listview, position);
+        ViewHolder holder = ViewHolder.get(context, parent, viewGroup, layoutId, position);
 
         convert(holder, getItem(position));
 

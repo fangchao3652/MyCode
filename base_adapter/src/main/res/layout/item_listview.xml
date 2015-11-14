@@ -1,10 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="10dp"
-
+    android:descendantFocusability="blocksDescendants"
     tools:context=".MainActivity">
+
+    <CheckBox
+        android:id="@+id/id_cb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
 
     <TextView
         android:id="@+id/id_title"
@@ -21,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/id_title"
         android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@+id/id_cb"
         android:maxLines="2"
         android:minLines="1"
         android:text="这是描述信息打造万能的适配器"
@@ -38,21 +47,22 @@
         android:text="2013-12-12"
         android:textColor="#898989"
         android:textSize="12sp" />
+
     <TextView
-        android:background="#2ed667"
         android:id="@+id/id_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/id_desc"
         android:layout_marginTop="10dp"
+        android:background="#2ed667"
+        android:drawableLeft="@drawable/phone"
+        android:drawablePadding="5dp"
         android:maxLines="2"
         android:minLines="1"
-        android:drawableLeft="@drawable/phone"
-        android:text="10086"
-        android:drawablePadding="5dp"
-android:layout_alignParentRight="true"
-        android:textColor="#fff"
         android:padding="3dp"
+        android:text="10086"
+        android:textColor="#fff"
         android:textSize="12sp" />
 
 </RelativeLayout>
