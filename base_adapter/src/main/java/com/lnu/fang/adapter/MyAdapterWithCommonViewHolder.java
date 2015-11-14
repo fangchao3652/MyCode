@@ -24,13 +24,16 @@ public class MyAdapterWithCommonViewHolder extends CommonAdapter<Bean> {
     }
     @Override
     public void convert(ViewHolder holder, Bean bean) {
-        TextView mTitle = holder.getView(R.id.id_title);
-        mTitle.setText(bean.getTitle());
+       holder.setTextViewText(R.id.id_title,bean.getTitle())
+               .setTextViewText(R.id.id_desc,bean.getDesc())
+               .setTextViewText(R.id.id_time,bean.getTime())
+               .setTextViewText(R.id.id_phone,bean.getPhone());
+     /*
         TextView mDesc = holder.getView(R.id.id_desc);
         mDesc.setText(bean.getDesc());
         TextView mTime = holder.getView(R.id.id_time);
         mTime.setText(bean.getTime());
         TextView mPhone = holder.getView(R.id.id_phone);
-        mPhone.setText(bean.getPhone());
+        mPhone.setText(bean.getPhone());*/
     }
 }
