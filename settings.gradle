@@ -1,1 +1,1 @@
-include ':app', ':lrucacheanddisklru', ':flowlayout', ':base_adapter', ':topbar'
+include ':app', ':lrucacheanddisklru', ':flowlayout', ':base_adapter', ':topbar', ':imooc_大转盘'
