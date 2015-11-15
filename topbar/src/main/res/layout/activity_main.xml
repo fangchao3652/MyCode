@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:topbar="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".MainActivity">
+
+    <com.lnu.fang.topbar.view.TopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        topbar:leftBackground="@color/material_deep_teal_500"
+        topbar:leftText="Back"
+        topbar:leftTextColor="#FFF"
+        topbar:mytitle="这是标题"
+        topbar:mytitleTextColor="#FFF"
+        topbar:mytitleTextSize="10sp"
+        topbar:rightBackground="@color/material_deep_teal_500"
+        topbar:rightText="More"
+        topbar:rightTextColor="#FFF"></com.lnu.fang.topbar.view.TopBar>
+    <!--<RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="40dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="aaaaa"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="aaaaa"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_height="match_parent"
+            android:text="sssssssssssss"/>
+
+        </RelativeLayout>-->
+</RelativeLayout>

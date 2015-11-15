@@ -1,1 +1,1 @@
-include ':app', ':lrucacheanddisklru', ':flowlayout', ':base_adapter'
+include ':app', ':lrucacheanddisklru', ':flowlayout', ':base_adapter', ':topbar'
