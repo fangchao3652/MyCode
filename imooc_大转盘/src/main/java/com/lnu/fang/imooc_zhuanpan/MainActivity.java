@@ -21,7 +21,8 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 if (!luckPanSV.isstart()) {
-                    luckPanSV.luckStart();
+//                    luckPanSV.luckStart();
+                    luckPanSV.luckStart(1);
                     startBtn.setImageResource(R.drawable.stop);
                 } else {
                     if (!luckPanSV.isShouldEnd()) {

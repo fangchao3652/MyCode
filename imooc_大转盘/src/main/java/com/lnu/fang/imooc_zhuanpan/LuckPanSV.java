@@ -80,7 +80,7 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
      */
     private double mspeed = 0;
 
-    private volatile int mStartAngel = 0;
+    private volatile float mStartAngel = 0;
     /**
      * 是否点击了停止按钮
      */
@@ -209,11 +209,10 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
                 }
                 //家这句话开始旋转
                 mStartAngel += mspeed;
-
+//点击stop这句开始执行
                 if (isShouldEnd) {
-                    mspeed -= 1;//速速递减
+                    mspeed -= 1;//速速递减 d=-1
                 }
-
                 if (mspeed <= 0) {
                     mspeed = 0;
                     isShouldEnd = false;
@@ -237,32 +236,66 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
     }
 
     /**
+     * 启动转盘 停到第index个上
+     */
+    public void luckStart(int index) {
+        //计算每一项的角度
+        float angle = 360 / mItemCount;
+        //计算当前项的中奖范围  1  150~210
+        //2  210~270
+        //3  270~330
+        float from = (270 - (index + 1) * angle);
+        float end = from + angle;
+        //设置停下来需要旋转的距离
+        float targetFrom = 5 * 360 + from;
+        float targetEnd = 5 * 360 + end;
+/**
+ * <pre>
+ *     每次减1 递减数列  等差数列求和  前n项和公式为：Sn=na1+n(n-1)d/2  d=-1  每次递减1
+ *     (v1+0)*（v1+1）/2=targetFrom
+ *     v1*v1-2*targetFrom+v1=0
+ *     v1=(-1+Math.sqrt(1+8*tatFrom))/2
+ * </pre>
+ */
+/**
+ * 速度范围  若在这个范围内 停下来时 会在规定范围内
+ */
+        float v1 = (float) ((-1 + Math.sqrt(1 + 8 * targetFrom)) / 2);//初始速度
+        float v2 = (float) ((-1 + Math.sqrt(1 + 8 * targetEnd)) / 2);//初始速度
+        mspeed = v1 + Math.random() * (v2 - v1);
+        isShouldEnd = false;
+    }
+
+    /**
      * stop转盘
      */
     public void luckStop() {
-
+        mStartAngel = 0;//用于停在指定位置之前是从 0度开始算 强制转为0度  用户看不出
         isShouldEnd = true;
     }
 
     /**
      * 转盘是否还在旋转
+     *
      * @return
      */
-    public boolean isstart(){
-        return mspeed!=0;
+    public boolean isstart() {
+        return mspeed != 0;
     }
 
     /**
      * 停止按钮是否按下
+     *
      * @return
      */
-    public  boolean  isShouldEnd(){
-        return  isShouldEnd;
+    public boolean isShouldEnd() {
+        return isShouldEnd;
     }
+
     /**
      * 绘制Icon
      *
-     * @param mStartAngel
+     * @param mtempAngel
      * @param mBitmap
      */
     private void drawIcon(float mtempAngel, Bitmap mBitmap) {
