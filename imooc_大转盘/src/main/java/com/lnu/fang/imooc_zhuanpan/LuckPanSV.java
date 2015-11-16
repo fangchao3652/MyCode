@@ -78,7 +78,7 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
     /**
      * 盘快的滚动速度
      */
-    private double mspeed;
+    private double mspeed = 0;
 
     private volatile int mStartAngel = 0;
     /**
@@ -207,6 +207,17 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
                     drawIcon(tempAngle, mBitmaps[i]);
                     tempAngle += sweepAngle;
                 }
+                //家这句话开始旋转
+                mStartAngel += mspeed;
+
+                if (isShouldEnd) {
+                    mspeed -= 1;//速速递减
+                }
+
+                if (mspeed <= 0) {
+                    mspeed = 0;
+                    isShouldEnd = false;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,6 +229,37 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
     }
 
     /**
+     * 启动转盘
+     */
+    public void luckStart() {
+        mspeed = 50;
+        isShouldEnd = false;
+    }
+
+    /**
+     * stop转盘
+     */
+    public void luckStop() {
+
+        isShouldEnd = true;
+    }
+
+    /**
+     * 转盘是否还在旋转
+     * @return
+     */
+    public boolean isstart(){
+        return mspeed!=0;
+    }
+
+    /**
+     * 停止按钮是否按下
+     * @return
+     */
+    public  boolean  isShouldEnd(){
+        return  isShouldEnd;
+    }
+    /**
      * 绘制Icon
      *
      * @param mStartAngel
@@ -228,12 +270,12 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
         int imgWidth = mRadius / 8;//自己看UI比例设计
         //Math.PI/180
         float angle = (float) ((mtempAngel + 360 / mItemCount / 2) * Math.PI / 180);//角度转换为弧度 方便sin cos计算
-       //图片中心点坐标 (x,y)
+        //图片中心点坐标 (x,y)
         int x = (int) (mCenter + mRadius / 2 / 2 * Math.cos(angle));
         int y = (int) (mCenter + mRadius / 2 / 2 * Math.sin(angle));
 
         //确定那个图片位置
-        Rect rect=new Rect(x-imgWidth/2,y-imgWidth/2,x+imgWidth/2,y+imgWidth/2);
+        Rect rect = new Rect(x - imgWidth / 2, y - imgWidth / 2, x + imgWidth / 2, y + imgWidth / 2);
         /**
          * drawBitmap(Bitmap bitmap, Rect src, RectF dst, Paint paint)；
          Rect src: 是对图片进行裁截，若是空null则显示整个图片
@@ -241,7 +283,7 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
          大于src则把src的裁截区放大，
          小于src则把src的裁截区缩小。
          */
-        canvas.drawBitmap(mBitmap,null,rect,mArcPaint);
+        canvas.drawBitmap(mBitmap, null, rect, mArcPaint);
 
 
     }
@@ -276,7 +318,7 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
      * 绘制背景
      */
     private void drawBg() {
-        canvas.drawColor(0xFFFFFFFF);
+        canvas.drawColor(0xFFFFFFFF);//直接绘制背景
         canvas.drawBitmap(mbgBitmap, null, new RectF(mpadding / 2, mpadding / 2, mpadding * 3 / 2 + mRadius, mpadding * 3 / 2 + mRadius), mArcPaint);
     }
 }

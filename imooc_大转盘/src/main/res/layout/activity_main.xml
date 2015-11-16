@@ -14,5 +14,10 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:padding ="30dp" />
-
+<ImageView
+    android:id="@+id/id_startbtn"
+    android:layout_width="wrap_content"
+    android:layout_centerInParent="true"
+    android:src="@drawable/start"
+    android:layout_height="wrap_content" />
 </RelativeLayout>

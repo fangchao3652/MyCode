@@ -1,39 +1,40 @@
 package com.lnu.fang.imooc_zhuanpan;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+import android.widget.ImageView;
 
 
 public class MainActivity extends ActionBarActivity {
+    private LuckPanSV luckPanSV;
+    private ImageView startBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        luckPanSV = (LuckPanSV) findViewById(R.id.id_luckypan);
+        startBtn = (ImageView) findViewById(R.id.id_startbtn);
+
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!luckPanSV.isstart()) {
+                    luckPanSV.luckStart();
+                    startBtn.setImageResource(R.drawable.stop);
+                } else {
+                    if (!luckPanSV.isShouldEnd()) {
+                        luckPanSV.luckStop();
+                        startBtn.setImageResource(R.drawable.start);
+
+                    } else {
+                        //什么也不做
+                    }
+                }
+            }
+        });
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
