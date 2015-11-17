@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.lnu.fang.topbar.view.TopBar;
 
+import java.io.File;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -26,8 +28,12 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void rightClick() {
                 System.out.println("点击  more");
-            }
+                System.out.println("getFilesDir()==="+MainActivity.this.getFilesDir());
+                System.out.println("getCacheDir()==="+MainActivity.this.getCacheDir());
+                System.out.println("getExternalFilesDir()==="+MainActivity.this.getExternalFilesDir("fangchao.txt"));
+                System.out.println("getExternalCacheDir()==="+MainActivity.this.getExternalCacheDir());
 
+            }
 
         });
     }

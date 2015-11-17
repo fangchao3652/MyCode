@@ -181,6 +181,7 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 			cachePath = context.getExternalCacheDir().getPath();
 		} else {
 			cachePath = context.getCacheDir().getPath();
+
 		}
 		return new File(cachePath + File.separator + uniqueName);
 	}
@@ -328,7 +329,7 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 		/**
 		 * 建立HTTP请求，并获取Bitmap对象。
 		 * 
-		 * @param imageUrl
+		 * @param urlString
 		 *            图片的URL地址
 		 * @return 解析后的Bitmap对象
 		 */
