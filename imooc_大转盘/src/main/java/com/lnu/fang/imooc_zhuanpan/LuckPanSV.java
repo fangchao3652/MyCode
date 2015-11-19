@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.SurfaceHolder;
@@ -317,7 +318,6 @@ public class LuckPanSV extends SurfaceView implements SurfaceHolder.Callback, Ru
          小于src则把src的裁截区缩小。
          */
         canvas.drawBitmap(mBitmap, null, rect, mArcPaint);
-
 
     }
 

@@ -1,1 +1,1 @@
-include ':app', ':lrucacheanddisklru', ':flowlayout', ':base_adapter', ':topbar', ':imooc_大转盘', ':pagerviewtest'
+include ':app', ':lrucacheanddisklru', ':flowlayout', ':base_adapter', ':topbar', ':imooc_大转盘', ':pagerviewtest', ':pic_微信图片选择'
