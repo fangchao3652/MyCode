@@ -1,0 +1,2 @@
+Task->TaskQUene->通知后台线程池--》把task放到它的内部任务队列中
+但是这个过程是瞬间的，不过是FIFO还是LIFO 都是接着放到线程池中  所以还是用一个信号量进行控制 getTask等待与阻塞http://www.imooc.com/video/9450

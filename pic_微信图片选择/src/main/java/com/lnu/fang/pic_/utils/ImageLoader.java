@@ -8,11 +8,14 @@ import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by Fang on 2015/11/18.
@@ -27,7 +30,7 @@ public class ImageLoader {
      */
     private Type mType = Type.LIFO;
 
-    private enum Type {
+    public enum Type {
         FIFO, LIFO
     }
 
@@ -44,7 +47,11 @@ public class ImageLoader {
      * UI线程中的Handler
      */
     private Handler mUIHandler;
-
+    /**
+     * 用于确保先生成PoolThreadHandler对象
+     */
+    private Semaphore mSemaphorePoolThreadHandler = new Semaphore(0);//默认是0个
+    private Semaphore mSemaphorePoolThread;//先不new
 
     private ImageLoader(int threadCount, Type type) {
         init(threadCount, type);
@@ -66,9 +73,17 @@ public class ImageLoader {
                     public void handleMessage(Message msg) {
                         //取出一个任务进行执行
                         mThreadPool.execute(getTask());
+                        try {
+                            //假如最大允许有三个，那么第四个就会阻塞在这里  当loadImage加载压缩完毕后 在那里释放一个信号量，第四个会执行，但这时的第四个就不是第四个加进去的那个了，这就要有gettask里的LIFO和FIFO决定了
+                            mSemaphorePoolThread.acquire();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 };
+                //释放信号量
+                mSemaphorePoolThreadHandler.release();
                 Looper.loop();
             }
         };
@@ -88,6 +103,31 @@ public class ImageLoader {
         mThreadPool = Executors.newFixedThreadPool(threadCount);
         mTaskQueue = new LinkedList<Runnable>();
         mType = Type.LIFO;
+
+
+        mSemaphorePoolThread = new Semaphore(threadCount);
+    }
+
+    /**
+     * 这里用到了mPoolThreadHandler 而他有可能还没有被创建出来，所以为了处理并发我们用信号量 控制一下  在该方法里请求一个信号量，若没有则一直阻塞相当于wait
+     * mPoolThreadHandler创建完毕后释放信号量 相当于notify
+     *
+     * @param runnable
+     */
+    private synchronized void addTasks(Runnable runnable) {
+        //加到队列中
+        mTaskQueue.add(runnable);
+
+        //发送通知
+        //if(mPoolThreadHandler==null) wait
+        try {
+            if (mPoolThreadHandler == null)
+                mSemaphorePoolThreadHandler.acquire();//默认是0个 现在去请求会阻塞
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mPoolThreadHandler.sendEmptyMessage(0x111);
+
     }
 
     /**
@@ -138,14 +178,15 @@ public class ImageLoader {
                 public void run() {
 //加载图片
                     //图片压缩 option
-                    //1.活得图片需要显示的大学
+                    //1.获得图片需要显示的大小
                     ImageSize imageSize = getImageviewSize(imageview111);
                     //2压缩图片
-                    Bitmap bm=decodeSampleBitmapFromPath(imageSize.width,imageSize.height,path);
+                    Bitmap bm = decodeSampleBitmapFromPath(imageSize.width, imageSize.height, path);
                     //3 加入到缓存
-                    addBitmapToLruCache(path,bm);
+                    addBitmapToLruCache(path, bm);
                     //4
                     reFreshBitmap(path, imageview111, bm);//***********向主线程 发送这个图片
+                    mSemaphorePoolThread.release();
                 }
             });
         }
@@ -164,39 +205,40 @@ public class ImageLoader {
 
     /**
      * 加入缓存
+     *
      * @param path
      * @param bm
      */
     private void addBitmapToLruCache(String path, Bitmap bm) {
-        if(getBitmapFromLruCache(path)==null){
-            if(bm!=null){
-                mLruCache.put(path,bm);
+        if (getBitmapFromLruCache(path) == null) {
+            if (bm != null) {
+                mLruCache.put(path, bm);
             }
         }
     }
 
     /**
-     *根据图片需要显示的宽和高对图片进行压缩
+     * 根据图片需要显示的宽和高对图片进行压缩
+     *
      * @param width
      * @param height
      * @param path
      * @return
      */
     private Bitmap decodeSampleBitmapFromPath(int width, int height, String path) {
-        BitmapFactory.Options options=new BitmapFactory.Options();
-        options.inJustDecodeBounds=true;//获取宽和高并不加载到内存
-        BitmapFactory.decodeFile(path,options);
-        options.inSampleSize=caculateInsampleSizze(options,width,height);
-        options.inJustDecodeBounds=false ;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;//获取宽和高并不加载到内存
+        BitmapFactory.decodeFile(path, options);
+        options.inSampleSize = caculateInsampleSizze(options, width, height);
+        options.inJustDecodeBounds = false;
         //再次解析图片
-       return BitmapFactory.decodeFile(path,options);
+        return BitmapFactory.decodeFile(path, options);
     }
 
     /**
      * 根据目标图片大小来计算Sample图片大小
+     *
      * @param options
-     * @param width
-     * @param height
      * @return
      */
     private int caculateInsampleSizze(BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -212,7 +254,7 @@ public class ImageLoader {
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
         return inSampleSize;
-     }
+    }
 
 
     /**
@@ -227,34 +269,28 @@ public class ImageLoader {
 
         ImageSize imageSize = new ImageSize();
         ViewGroup.LayoutParams lp = imageview.getLayoutParams();
-        int width = imageview.getWidth();
-        if (width <= 0) {//有可能刚刚new 出来 还没放到容器中
-            width = lp.width;//在xml设置的确切的宽度
-        }
-        if (width <= 0) {//wrap_content  fill_parent
-            width = imageview.getMaxWidth();//API 16
-        }
-
-        if (width <= 0) {//再不行等于屏幕宽度
+        int width = lp.width == ViewGroup.LayoutParams.WRAP_CONTENT ? 0 : imageview
+                .getWidth(); // Get actual image width
+        if (width <= 0)
+            width = lp.width; // Get layout width parameter
+        if (width <= 0)
+            width = getImageviewFieldValue(imageview, "mMaxWidth"); // Check
+        // maxWidth
+        // parameter
+        if (width <= 0)
             width = displayMetrics.widthPixels;
-
-        }
-
-
-        int height = imageview.getHeight();
-        if (height <= 0) {//有可能刚刚new 出来 还没放到容器中
-            height = lp.width;//在xml设置的确切的宽度
-        }
-        if (height <= 0) {//wrap_content  fill_parent
-            height = imageview.getMaxHeight();//API 16
-        }
-
-        if (height <= 0) {//再不行等于屏幕宽度
+        int height = lp.height == GridLayout.LayoutParams.WRAP_CONTENT ? 0 : imageview
+                .getHeight(); // Get actual image height
+        if (height <= 0)
+            height = lp.height; // Get layout height parameter
+        if (height <= 0)
+            height = getImageviewFieldValue(imageview, "mMaxHeight"); // Check
+        // maxHeight
+        // parameter
+        if (height <= 0)
             height = displayMetrics.heightPixels;
-
-        }
-        imageSize.height = height;
         imageSize.width = width;
+        imageSize.height = height;
         return imageSize;
     }
 
@@ -263,17 +299,6 @@ public class ImageLoader {
         int height;
     }
 
-    /**
-     * 这里用到了mPoolThreadHandler 而他有可能还没有被创建出来，所以为了处理并发我们用信号量 控制一下  在该方法里请求一个信号量，若没有则一直阻塞相当于wait
-     * mPoolThreadHandler创建完毕后释放信号量 相当于notify
-     * @param runnable
-     */
-    private void addTasks(Runnable runnable) {
-        mTaskQueue.add(runnable);
-        //发送通知
-        mPoolThreadHandler.sendEmptyMessage(0x111);
-
-    }
 
     /**
      * @param key
@@ -292,6 +317,27 @@ public class ImageLoader {
         String path;
     }
 
+    /**
+     * 单例获得该实例对象
+     *
+     * @return
+     */
+    public static ImageLoader getInstance(int threadCount, Type type)
+    {
+
+        if (mInstance == null)
+        {
+            synchronized (ImageLoader.class)
+            {
+                if (mInstance == null)
+                {
+                    mInstance = new ImageLoader(threadCount, type);
+                }
+            }
+        }
+        return mInstance;
+    }
+
     public static ImageLoader getInstance() {
         if (mInstance == null) {
             synchronized (ImageLoader.class) {
@@ -301,5 +347,32 @@ public class ImageLoader {
             }
         }
         return mInstance;
+    }
+
+
+    /**
+     * 为了兼容API<16的
+     * 通过反射获取IV 的某个属性值
+     *
+     * @param object
+     * @param fieldName
+     * @return
+     */
+    private static int getImageviewFieldValue(Object object, String fieldName) {
+        int value = 0;
+        try {
+            Field field = ImageLoader.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+
+            int filedValue = field.getInt(object);
+            if (filedValue > 0 && filedValue < Integer.MAX_VALUE) {
+                value = filedValue;
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
 }
