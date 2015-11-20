@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -85,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
                     }
                 }));
 
-
+                //Collections.reverse(mImags);
                 imageAdapter = new ImageAdapter(MainActivity.this, mImags, R.layout.grid_item, mCurrentDir.getAbsolutePath());
                 mGirdView.setAdapter(imageAdapter);
 
@@ -123,6 +124,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         mImags = Arrays.asList(mCurrentDir.list());
+       //Collections.reverse(mImags);
         imageAdapter = new ImageAdapter(MainActivity.this, mImags, R.layout.grid_item, mCurrentDir.getAbsolutePath());
         mGirdView.setAdapter(imageAdapter);
 
@@ -160,7 +162,7 @@ public class MainActivity extends ActionBarActivity {
                         MediaStore.Images.Media.MIME_TYPE + "=? or "
                                 + MediaStore.Images.Media.MIME_TYPE + "=?",
                         new String[]{"image/jpeg", "image/png"},
-                        MediaStore.Images.Media.DATE_MODIFIED);
+                        MediaStore.Images.Media.DATE_MODIFIED );
 
                 Log.e("TAG", c.getCount() + "");
 

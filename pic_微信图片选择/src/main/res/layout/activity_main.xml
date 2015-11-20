@@ -6,6 +6,7 @@
     <GridView
         android:id="@+id/id_gridView"
         android:layout_width="match_parent"
+        android:layout_above="@+id/id_bottom_ly"
         android:layout_height="match_parent"
         android:cacheColorHint="@android:color/transparent"
         android:clipChildren="true"

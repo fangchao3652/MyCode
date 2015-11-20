@@ -137,9 +137,9 @@ public class ImageLoader {
      */
     private Runnable getTask() {
         if (mType == Type.FIFO) {
-            return mTaskQueue.removeFirst();
+            return mTaskQueue.removeFirst();//顺序加载  这样等待时间较长
         } else if (mType == Type.LIFO) {
-            return mTaskQueue.removeLast();
+            return mTaskQueue.removeLast(); //先加载当前的 先执行最新的task
         } else
             return null;
     }
