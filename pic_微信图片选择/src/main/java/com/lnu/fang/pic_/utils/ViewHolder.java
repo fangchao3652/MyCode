@@ -52,8 +52,8 @@ public class ViewHolder {
     public <T extends View> T getView(int viewId) {
         View view = mViews.get(viewId);
         if (view == null) {
-            view = mConvertView.findViewById(viewId);
-            mViews.put(viewId, view);
+            view = mConvertView.findViewById(viewId);//
+            mViews.put(viewId, view);//放到 list中 避免每次都 findviewById 因为这需要都磁盘 耗资源
         }
         return (T) view;
     }

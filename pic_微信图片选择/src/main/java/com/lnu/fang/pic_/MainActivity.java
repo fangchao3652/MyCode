@@ -11,7 +11,11 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.GridView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,20 +49,75 @@ public class MainActivity extends ActionBarActivity {
 
     private ProgressDialog mProgressDialog;
 
-
+    private ListImageDirPopupWindow popupWindow;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
                 mProgressDialog.dismiss();
                 data2View();
+
+                initDirPopupWindow();
             }
         }
     };
 
+    private void initDirPopupWindow() {
+        popupWindow = new ListImageDirPopupWindow(this, mFolderBeans);
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                Light();
+            }
+        });
+
+        popupWindow.setmOnDirSelectedListener(new ListImageDirPopupWindow.onDirSelectedListener() {
+            @Override
+            public void onSelected(FolderBean folderBean) {
+                mCurrentDir = new File(folderBean.getDir());
+                mImags = Arrays.asList(mCurrentDir.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File file, String filename) {
+                        if (filename.endsWith(".jpg") || filename.endsWith(".jpeg") || filename.endsWith(".png")) {
+                            return true;
+                        }
+                        return false;
+                    }
+                }));
+
+
+                imageAdapter = new ImageAdapter(MainActivity.this, mImags, R.layout.grid_item, mCurrentDir.getAbsolutePath());
+                mGirdView.setAdapter(imageAdapter);
+
+                mDirName.setText(mCurrentDir.getName());
+                mDirCount.setText("" + mImags.size());
+                popupWindow.dismiss();
+            }
+        });
+    }
+
+    /**
+     * 内容区域变亮
+     */
+    private void Light() {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 1.0f;
+        getWindow().setAttributes(lp);
+    }
+
+    /**
+     * // 设置背景颜色变暗
+     */
+    private void lightOff() {
+
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = .3f;
+        getWindow().setAttributes(lp);
+    }
+
     private void data2View() {
         if (mCurrentDir == null) {
-            Toast.makeText(getApplicationContext(), "擦，一张图片没扫描到",
+            Toast.makeText(getApplicationContext(), "啊哦，一张图片没扫描到",
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -100,7 +159,7 @@ public class MainActivity extends ActionBarActivity {
                 Cursor c = cr.query(mImageUri, null,
                         MediaStore.Images.Media.MIME_TYPE + "=? or "
                                 + MediaStore.Images.Media.MIME_TYPE + "=?",
-                        new String[] { "image/jpeg", "image/png" },
+                        new String[]{"image/jpeg", "image/png"},
                         MediaStore.Images.Media.DATE_MODIFIED);
 
                 Log.e("TAG", c.getCount() + "");
@@ -163,30 +222,27 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initEvent() {
-       /* *//**
-         * 为底部的布局设置点击事件，弹出popupWindow
-         *//*
-        mBottomLy.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                mListImageDirPopupWindow
-                        .setAnimationStyle(R.style.anim_popup_dir);
-                mListImageDirPopupWindow.showAsDropDown(mBottomLy, 0, 0);
+        /**
+         *  为底部的布局设置点击事件，弹出popupWindow*/
 
-                // 设置背景颜色变暗
-                WindowManager.LayoutParams lp = getWindow().getAttributes();
-                lp.alpha = .3f;
-                getWindow().setAttributes(lp);
+        mBottomLy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //popupwindow 动画
+                popupWindow
+                .setAnimationStyle(R.style.anim_popup_dir);
+              popupWindow.showAsDropDown(mBottomLy, 0, 0);
+                //   popupWindow.showAtLocation(mBottomLy, Gravity.TOP, 0, 0);
+                lightOff();
             }
-        });*/
+        });
     }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mProgressDialog!=null)
+        if (mProgressDialog != null)
             mProgressDialog.dismiss();
     }
 }
