@@ -35,6 +35,11 @@ public class ImageAdapter extends CommonAdapter<String> {
 
     @Override
     public void convert(ViewHolder helper, final String filename) {
+        final ImageView mImageView = helper.getView(R.id.item_image);
+        final ImageView mSelect = helper.getView(R.id.item_select);
+       // mImageView.setMaxWidth();//ImageLoader 压缩的时候用的 可以设为屏幕的1/3，省内存  要不我们在计算的时候会按屏幕宽度进行压缩
+
+
         //设置no_pic
          helper.setImageResource(R.id.item_image, R.drawable.pictures_no);
         //设置no_selected
@@ -44,8 +49,6 @@ public class ImageAdapter extends CommonAdapter<String> {
         helper.setImageByUrl(R.id.item_image, mDirPath + "/" + filename);
 
 
-        final ImageView mImageView = helper.getView(R.id.item_image);
-        final ImageView mSelect = helper.getView(R.id.item_select);
 
         mImageView.setColorFilter(null);
         mImageView.setOnClickListener(new View.OnClickListener() {
